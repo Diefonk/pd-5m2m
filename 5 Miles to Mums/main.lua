@@ -8,7 +8,7 @@ local characterImage
 
 function init()
 	camera = Camera(0, 0, 0)
-	characterImage = gfx.image.new("images/character")
+	characterImage = gfx.image.new("images/character1")
 	for index = 1, 10 do
 		characters[index] = {}
 		characters[index].sprite = gfx.sprite.new()
