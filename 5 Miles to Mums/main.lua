@@ -1,33 +1,38 @@
 import "Camera"
 
 local gfx <const> = playdate.graphics
+local snd <const> = playdate.sound
 
 local camera
 local characters = {}
 local characterImages = {}
 local hand
 local handImage
-local sign = {}
+local sign
 local signImage
+local sounds = {}
 
 function init()
 	camera = Camera(0.5, 1, -1)
+
 	characterImages[1] = gfx.image.new("images/character1")
 	characterImages[2] = gfx.image.new("images/character2")
 	characterImages[3] = gfx.image.new("images/character3")
 	characterImages[4] = gfx.image.new("images/character4")
 	characterImages[5] = gfx.image.new("images/character5")
-	for index = 1, 10 do
+	for index = 1, 15 do
 		characters[index] = {}
 		characters[index].sprite = gfx.sprite.new()
 		characters[index].sprite:setImage(characterImages[index % 5 + 1])
 		characters[index].sprite:setCenter(0.5, 1)
-		characters[index].position = Vector4(math.random() * 10 - 5, 0, math.random() * 10 - 5, 1)
+		characters[index].position = Vector4(math.random() * 7 - 3.5, 0, math.random() * 7 - 3.5, 1)
 	end
+
 	signImage = gfx.image.new("images/sign")
 	sign = gfx.sprite.new()
 	sign:setImage(signImage)
 	sign:setCenter(0.5, 1)
+
 	handImage = gfx.image.new("images/hand")
 	hand = gfx.sprite.new()
 	hand:setImage(handImage)
@@ -35,14 +40,30 @@ function init()
 	hand:moveTo(400, 240)
 	hand:setScale(0.4)
 	hand:add()
+
+	sounds[1] = snd.sampleplayer.new("sounds/guy1")
+	sounds[1]:setVolume(0.8, 0)
+	sounds[1]:play(0)
+	sounds[2] = snd.sampleplayer.new("sounds/guy2")
+	sounds[2]:setVolume(0.6, 0.2)
+	sounds[2]:play(0)
+	sounds[3] = snd.sampleplayer.new("sounds/guy3")
+	sounds[3]:setVolume(0.4, 0.4)
+	sounds[3]:play(0)
+	sounds[4] = snd.sampleplayer.new("sounds/guy4")
+	sounds[4]:setVolume(0.2, 0.6)
+	sounds[4]:play(0)
+	sounds[5] = snd.sampleplayer.new("sounds/guy5")
+	sounds[5]:setVolume(0, 0.8)
+	sounds[5]:play(0)
 end
 
 function playdate.update()
 	camera:update()
-	for index = 1, 10 do
+	for index = 1, 15 do
 		local transform = Vector4(characters[index].position.x, characters[index].position.y, characters[index].position.z, 1)
 		camera:worldToPostProjection(transform)
-		if transform.z < camera:getNearPlane() or transform.z > camera:getFarPlane() then
+		if transform.z < camera.nearPlane or transform.z > camera.farPlane then
 			characters[index].sprite:remove()
 		else
 			characters[index].sprite:setZIndex(-(transform.z * 1000))
@@ -53,7 +74,7 @@ function playdate.update()
 	end
 	local transform = Vector4(0, 0, 0, 1)
 	camera:worldToPostProjection(transform)
-	if transform.z < camera:getNearPlane() or transform.z > camera:getFarPlane() then
+	if transform.z < camera.nearPlane or transform.z > camera.farPlane then
 		sign:remove()
 	else
 		sign:setZIndex(-(transform.z * 1000))

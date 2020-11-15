@@ -71,11 +71,3 @@ function Camera:worldToPostProjection(transform)
 		transform.y = transform.y * 240
 	end
 end
-
-function Camera:getNearPlane()
-	return self.nearPlane
-end
-
-function Camera:getFarPlane()
-	return self.farPlane
-end
