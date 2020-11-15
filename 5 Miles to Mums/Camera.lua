@@ -15,7 +15,7 @@ function Camera:init(x, y, z)
 	self.projectionMatrix:set(3, 4, 1)
 	self.projectionMatrix:set(4, 3, -(self.farPlane * self.nearPlane) / (self.farPlane - self.nearPlane))
 	self.projectionMatrix:set(4, 4, 0)
-	self.position = Vector4(x, y, x, 1)
+	self.position = Vector4(x, y, z, 1)
 	self.orientation = Matrix4x4()
 	self.transformation = Matrix4x4()
 	self.viewMatrix = Matrix4x4()
@@ -66,10 +66,16 @@ function Camera:worldToPostProjection(transform)
 		transform.y = transform.y / transform.z
 		transform.x = transform.x / self.windowRatio
 		transform.x = (transform.x + 1) / 2
+		transform.x = transform.x * 400
 		transform.y = 1 - (transform.y + 1) / 2
+		transform.y = transform.y * 240
 	end
 end
 
 function Camera:getNearPlane()
 	return self.nearPlane
+end
+
+function Camera:getFarPlane()
+	return self.farPlane
 end
