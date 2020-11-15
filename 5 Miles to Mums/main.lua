@@ -4,7 +4,7 @@ local gfx <const> = playdate.graphics
 
 local camera
 local characters = {}
-local characterImage
+local characterImages = {}
 local hand
 local handImage
 local sign = {}
@@ -12,13 +12,17 @@ local signImage
 
 function init()
 	camera = Camera(0.5, 1, -1)
-	characterImage = gfx.image.new("images/character1")
-	for index = 1, 6 do
+	characterImages[1] = gfx.image.new("images/character1")
+	characterImages[2] = gfx.image.new("images/character2")
+	characterImages[3] = gfx.image.new("images/character3")
+	characterImages[4] = gfx.image.new("images/character4")
+	characterImages[5] = gfx.image.new("images/character5")
+	for index = 1, 10 do
 		characters[index] = {}
 		characters[index].sprite = gfx.sprite.new()
-		characters[index].sprite:setImage(characterImage)
+		characters[index].sprite:setImage(characterImages[index % 5 + 1])
 		characters[index].sprite:setCenter(0.5, 1)
-		characters[index].position = Vector4(math.random() * 6 - 3, 0, math.random() * 6 - 3, 1)
+		characters[index].position = Vector4(math.random() * 10 - 5, 0, math.random() * 10 - 5, 1)
 	end
 	signImage = gfx.image.new("images/sign")
 	sign = gfx.sprite.new()
@@ -29,13 +33,13 @@ function init()
 	hand:setImage(handImage)
 	hand:setCenter(1, 1)
 	hand:moveTo(400, 240)
-	hand:setScale(0.3)
+	hand:setScale(0.4)
 	hand:add()
 end
 
 function playdate.update()
 	camera:update()
-	for index = 1, 6 do
+	for index = 1, 10 do
 		local transform = Vector4(characters[index].position.x, characters[index].position.y, characters[index].position.z, 1)
 		camera:worldToPostProjection(transform)
 		if transform.z < camera:getNearPlane() or transform.z > camera:getFarPlane() then
@@ -43,7 +47,7 @@ function playdate.update()
 		else
 			characters[index].sprite:setZIndex(-(transform.z * 1000))
 			characters[index].sprite:moveTo(transform.x, transform.y)
-			characters[index].sprite:setScale(0.3 / transform.z)
+			characters[index].sprite:setScale(0.4 / transform.z)
 			characters[index].sprite:add()
 		end
 	end
@@ -54,7 +58,7 @@ function playdate.update()
 	else
 		sign:setZIndex(-(transform.z * 1000))
 		sign:moveTo(transform.x, transform.y)
-		sign:setScale(0.3 / transform.z)
+		sign:setScale(0.4 / transform.z)
 		sign:add()
 	end
 	gfx.sprite.update()
