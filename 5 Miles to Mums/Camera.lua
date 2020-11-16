@@ -1,5 +1,6 @@
 import "Vector4"
 import "Matrix4x4"
+import "CoreLibs/timer"
 
 class("Camera").extends()
 
@@ -19,33 +20,40 @@ function Camera:init(x, y, z)
 	self.orientation = Matrix4x4()
 	self.transformation = Matrix4x4()
 	self.viewMatrix = Matrix4x4()
+	self.timer = playdate.timer.new(60000)
 end
 
 function Camera:update()
+	local deltaTime = self.timer.currentTime / 1000
+	self.timer:reset()
+
 	local left = playdate.buttonIsPressed(playdate.kButtonLeft)
 	local right = playdate.buttonIsPressed(playdate.kButtonRight)
 	local forwards = playdate.buttonIsPressed(playdate.kButtonUp)
 	local backwards = playdate.buttonIsPressed(playdate.kButtonDown)
+
 	self.orientation:setRotationAroundY(playdate.getCrankPosition() * (math.pi / 180))
+
 	if left and not right then
 		local direction = Vector4(-1, 0, 0, 0)
-		direction:multiplyScalar(self.speed * 0.033) --delta time
+		direction:multiplyScalar(self.speed * deltaTime)
 		direction:multiplyMatrix(self.orientation)
 		self.position:add(direction)
 	elseif right and not left then
 		local direction = Vector4(1, 0, 0, 0)
-		direction:multiplyScalar(self.speed * 0.033) --delta time
+		direction:multiplyScalar(self.speed * deltaTime)
 		direction:multiplyMatrix(self.orientation)
 		self.position:add(direction)
 	end
+
 	if forwards and not backwards then
 		local direction = Vector4(0, 0, 1, 0)
-		direction:multiplyScalar(self.speed * 0.033) --delta time
+		direction:multiplyScalar(self.speed * deltaTime)
 		direction:multiplyMatrix(self.orientation)
 		self.position:add(direction)
 	elseif backwards and not forwards then
 		local direction = Vector4(0, 0, -1, 0)
-		direction:multiplyScalar(self.speed * 0.033) --delta time
+		direction:multiplyScalar(self.speed * deltaTime)
 		direction:multiplyMatrix(self.orientation)
 		self.position:add(direction)
 	end
