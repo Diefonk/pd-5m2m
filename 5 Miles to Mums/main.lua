@@ -1,7 +1,6 @@
 import "Camera"
 
 local gfx <const> = playdate.graphics
-local snd <const> = playdate.sound
 
 local camera
 local characters = {}
@@ -10,7 +9,7 @@ local hand
 local handImage
 local sign
 local signImage
-local sounds = {}
+local sound
 
 function init()
 	camera = Camera(0.5, 1, -1)
@@ -41,21 +40,9 @@ function init()
 	hand:setScale(0.4)
 	hand:add()
 
-	sounds[1] = snd.sampleplayer.new("sounds/guy1")
-	sounds[1]:setVolume(0.8, 0)
-	sounds[1]:play(0)
-	sounds[2] = snd.sampleplayer.new("sounds/guy2")
-	sounds[2]:setVolume(0.6, 0.2)
-	sounds[2]:play(0)
-	sounds[3] = snd.sampleplayer.new("sounds/guy3")
-	sounds[3]:setVolume(0.4, 0.4)
-	sounds[3]:play(0)
-	sounds[4] = snd.sampleplayer.new("sounds/guy4")
-	sounds[4]:setVolume(0.2, 0.6)
-	sounds[4]:play(0)
-	sounds[5] = snd.sampleplayer.new("sounds/guy5")
-	sounds[5]:setVolume(0, 0.8)
-	sounds[5]:play(0)
+	sound = playdate.sound.sampleplayer.new("sound")
+	sound:setVolume(0.5)
+	sound:play(0)
 end
 
 function playdate.update()
