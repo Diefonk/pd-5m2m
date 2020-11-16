@@ -1,6 +1,8 @@
 import "Camera"
+import "CoreLibs/timer"
 
 local gfx <const> = playdate.graphics
+local tmr <const> = playdate.timer
 
 local camera
 local characters = {}
@@ -10,6 +12,20 @@ local handImage
 local sign
 local signImage
 local sound
+
+function despawnCharacter(character)
+	character.scaleTimer = tmr.new(200, 0.4, 0)
+	character.scaleTimer.timerEndedCallback = spawnCharacter
+	character.scaleTimer.timerEndedArgs = { character }
+end
+
+
+function spawnCharacter(character)
+	character.x = (math.random() * 7 - 3.5) + camera.position.x
+	character.z = (math.random() * 7 - 3.5) + camera.position.z
+	character.scaleTimer = tmr.new(200, 0, 0.4)
+	tmr.performAfterDelay(math.random() * 5000 + 10000, despawnCharacter, character)
+end
 
 function init()
 	camera = Camera(0.5, 1, -1)
@@ -24,7 +40,8 @@ function init()
 		characters[index].sprite = gfx.sprite.new()
 		characters[index].sprite:setImage(characterImages[index % 5 + 1])
 		characters[index].sprite:setCenter(0.5, 1)
-		characters[index].position = Vector4(math.random() * 7 - 3.5, 0, math.random() * 7 - 3.5, 1)
+		characters[index].scale = 0
+		spawnCharacter(characters[index])
 	end
 
 	signImage = gfx.image.new("images/sign")
@@ -46,16 +63,20 @@ function init()
 end
 
 function playdate.update()
+	tmr.updateTimers()
 	camera:update()
 	for index = 1, 15 do
-		local transform = Vector4(characters[index].position.x, characters[index].position.y, characters[index].position.z, 1)
+		local transform = Vector4(characters[index].x, 0, characters[index].z, 1)
 		camera:worldToPostProjection(transform)
 		if transform.z < camera.nearPlane or transform.z > camera.farPlane then
 			characters[index].sprite:remove()
 		else
 			characters[index].sprite:setZIndex(-(transform.z * 1000))
 			characters[index].sprite:moveTo(transform.x, transform.y)
-			characters[index].sprite:setScale(0.4 / transform.z)
+			if characters[index].scaleTimer then
+				characters[index].scale = characters[index].scaleTimer.value
+			end
+			characters[index].sprite:setScale(characters[index].scale / transform.z)
 			characters[index].sprite:add()
 		end
 	end
