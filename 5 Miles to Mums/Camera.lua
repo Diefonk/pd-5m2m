@@ -1,6 +1,5 @@
 import "Vector4"
 import "Matrix4x4"
-import "CoreLibs/timer"
 
 class("Camera").extends()
 
@@ -20,12 +19,10 @@ function Camera:init(x, y, z)
 	self.orientation = Matrix4x4()
 	self.transformation = Matrix4x4()
 	self.viewMatrix = Matrix4x4()
-	self.timer = playdate.timer.new(60000)
 end
 
 function Camera:update()
-	local deltaTime = self.timer.currentTime / 1000
-	self.timer:reset()
+	local deltaTime = 1 / playdate.display.getRefreshRate()
 
 	local left = playdate.buttonIsPressed(playdate.kButtonLeft)
 	local right = playdate.buttonIsPressed(playdate.kButtonRight)
